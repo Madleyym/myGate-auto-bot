@@ -9,17 +9,55 @@ const logger = {
   getCurrentTimestamp() {
     return new Date().toISOString().replace("T", " ").slice(0, 19);
   },
-  log: (level, message, value = "") => {
-    const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
-    const username = "Madleyym";
-    console.log(
-      `[ Mygate-Node ] [${username}] [${timestamp}] [ ${level.toUpperCase()} ] ${message} ${value}`
-    );
+
+  getEmoji(level) {
+    const emojis = {
+      info: "ℹ️ ",
+      warn: "⚠️ ",
+      error: "❌ ",
+      success: "✅ ",
+    };
+    return emojis[level] || "";
   },
+
+  getColor(level) {
+    const colors = {
+      info: chalk.blue,
+      warn: chalk.yellow,
+      error: chalk.red,
+      success: chalk.green,
+    };
+    return colors[level] || chalk.white;
+  },
+
+  formatMessage(level, message, value = "") {
+    const timestamp = this.getCurrentTimestamp();
+    const username = chalk.cyan("Madleyym");
+    const emoji = this.getEmoji(level);
+    const color = this.getColor(level);
+
+    return `${chalk.gray(timestamp)} ${username} ${emoji}${color(
+      message
+    )} ${value}`;
+  },
+
+  log(level, message, value = "") {
+    console.log(this.formatMessage(level, message, value));
+  },
+
   info: (message, value = "") => logger.log("info", message, value),
   warn: (message, value = "") => logger.log("warn", message, value),
   error: (message, value = "") => logger.log("error", message, value),
   success: (message, value = "") => logger.log("success", message, value),
+
+  printHeader() {
+    console.clear();
+    const border = chalk.cyan("═".repeat(50));
+    const title = chalk.bold.white("MyGate Bot v1.0");
+    console.log(`\n${border}`);
+    console.log(`${" ".repeat(19)}${title}`);
+    console.log(`${border}\n`);
+  },
 };
 
 const headers = {
